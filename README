@@ -1,0 +1,10 @@
+
+Getting Started
+---------------
+1. install docker
+2. install docker-compose
+3. git clone --recursive https://github.com/jarviisproject/jarvis-msa-user-board.git
+4. cd jarvis-msa-user-board
+5. docker-compose pull
+6. docker-compose up
+
