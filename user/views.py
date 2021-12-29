@@ -85,13 +85,15 @@ def user(request):
 
 
 @api_view(['GET'])
+@parser_classes([JSONParser])
 def exist(request, email):
     try:
-        existck = User.objects.all().filter(user_email=email).values()[0]
-        if email == existck['email']:
-            return JsonResponse({'exist': '해당 이메일은 있습니다'})
+        gettest = User.objects.get(user_email=email)
+        print(gettest.user_email)
+        return JsonResponse(data={'exist': '해당 이메일은 있습니다'}, status=status.HTTP_404_NOT_FOUND)
     except:
-        return JsonResponse({'exist':'사용 가능합니다.'})
+        return JsonResponse({'exist': '해당 이메일은 사용 가능합니다'})
+
 
 @api_view(['DELETE'])
 def remove(request, email):
