@@ -19,11 +19,10 @@ from django.urls import path
 from django.contrib import admin
 from django.urls import path, include
 
-from api.views import HelloAPI
+from api.views import UserApiServer
 
 urlpatterns = [
-    path('', HelloAPI),
-    path('api/hello', HelloAPI),
+    path('', UserApiServer),
     path('api/users', include('user.url')),
     path('api/board/', include('board.url')),
 ]
