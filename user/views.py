@@ -13,25 +13,21 @@ from rest_framework.authtoken.models import Token
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 @parser_classes([JSONParser])
 def users(request):
-    print("들어오긴했니")
     if request.method == 'GET':
         all_users = User.objects.all().values()
         serializer = UserSerializer(all_users, many=True)
         return JsonResponse(data=serializer.data, safe=False)
     elif request.method == 'POST':
-        print("들어오긴했니")
         new_user = request.data
-        print(f" ****** new_user :: {new_user}")
+        print(new_user)
         serializer = UserSerializer(data=new_user)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse({'join': 'SUCCESS'})
         else:
-            print(f' ## UserSerializer Error ## {serializer.errors}')
-        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'PUT':
         modifyemail = request.data
-        print(modifyemail)
         try:
             user = User.objects.get(id=modifyemail['id'])
             dbuser = User.objects.all().filter(id=modifyemail['id']).values()[0]
@@ -43,15 +39,15 @@ def users(request):
             return JsonResponse({'modify': 'SUCCESS'})
         except:
             return JsonResponse({'modify': '수정하고자 하는 user가 없습니다.'})
-    elif request.method == 'DELETE':
-        deluser = request.data
-        try:
-            dbuser = User.objects.get(user_email=deluser['email'])
-            if deluser['user_email'] == dbuser.user_email:
-                dbuser.delete()
-                return JsonResponse({'remove': 'SUCCESS'})
-        except:
-            return JsonResponse({'remove': 'error 지우고자 하는 user가 없습니다.'})
+    # elif request.method == 'DELETE':
+    #     deluser = request.data
+    #     try:
+    #         dbuser = User.objects.get(user_email=deluser['email'])
+    #         if deluser['user_email'] == dbuser.user_email:
+    #             dbuser.delete()
+    #             return JsonResponse({'remove': 'SUCCESS'})
+    #     except:
+    #         return JsonResponse({'remove': 'error 지우고자 하는 user가 없습니다.'})
 
 
 
@@ -59,11 +55,8 @@ def users(request):
 @parser_classes([JSONParser])
 def login(request):
     loginuser = request.data
-    print(loginuser)
     dbUser = User.objects.all().filter(user_email=loginuser['email']).values()[0]
-    print(f' ## 로그인 시도 ## ')
     if loginuser['password'] == dbUser['password']:
-        print(f' ## 로그인 성공 ## ')
         # token = Token.objects.create(user_email=loginuser['email'])
         # print(f'생성된 토큰값 : {token}')
         userSerializer = UserSerializer(data=dbUser, many=False)
@@ -89,7 +82,6 @@ def user(request):
 def exist(request, email):
     try:
         gettest = User.objects.get(user_email=email)
-        print(gettest.user_email)
         return JsonResponse(data={'exist': '해당 이메일은 있습니다'}, status=status.HTTP_404_NOT_FOUND)
     except:
         return JsonResponse({'exist': '해당 이메일은 사용 가능합니다'})
@@ -97,7 +89,6 @@ def exist(request, email):
 
 @api_view(['DELETE'])
 def remove(request, email):
-    print(f"*********************email :: {email}")
     dbuser = User.objects.get(user_email=email)
     dbuser.delete()
     return JsonResponse({'remove': 'SUCCESS'})
